@@ -1,6 +1,6 @@
 from crypt import methods
 from enum import unique
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 # from sqlalchemy import null
 from flask_sqlalchemy import SQLAlchemy
 
@@ -47,4 +47,23 @@ def get_fruit(id):
     #return jsonify if not working with a dictionary.
     #we don't use it here since dictionaries are serializable
 
-# @app.route('/fruits', methods=['POST'])    
+@app.route('/fruits', methods=['POST'])    
+def add_fruit():
+    fruit = Fruit(name=request.json['name'], description=request.json['description'])
+
+    db.session.add(fruit)
+    db.session.commit()
+
+    return {'id': fruit.id }
+
+@app.route('/fruits/<id>', methods=['DELETE'])
+def delete_fruit(id):
+    fruit = Fruit.query.get(id)
+
+    if fruit is None:
+        return{'error':'not found'}
+
+    db.session.delete(fruit)        
+    db.session.commit()
+
+    return{'message':'success'}
