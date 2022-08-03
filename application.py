@@ -1,5 +1,6 @@
+from crypt import methods
 from enum import unique
-from flask import Flask
+from flask import Flask, jsonify
 # from sqlalchemy import null
 from flask_sqlalchemy import SQLAlchemy
 
@@ -36,3 +37,14 @@ def get_fruits():
         output.append(fruit_data)
 
     return{"fruits":output}
+
+@app.route('/fruits/<id>')    
+def get_fruit(id):
+
+    fruit = Fruit.query.get_or_404(id)
+
+    return {"name":fruit.name, "description":fruit.description}
+    #return jsonify if not working with a dictionary.
+    #we don't use it here since dictionaries are serializable
+
+# @app.route('/fruits', methods=['POST'])    
